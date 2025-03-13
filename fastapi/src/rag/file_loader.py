@@ -105,7 +105,7 @@ class Loader:
     split_kwargs: dict
         The keyword arguments for the TextSplitter class.
     """
-    def __init__(self, 
+    def __init__(self,
                  file_type: str = Literal["pdf", "html"],
                  split_kwargs: dict = None
                  ) -> None:
@@ -123,7 +123,7 @@ class Loader:
         else:
             raise ValueError("file_type must be either pdf or html")
 
-        self.doc_spltter = TextSplitter(**split_kwargs)
+        self.doc_splitter = TextSplitter(**split_kwargs)
 
     def load(self, pdf_files: Union[str, List[str]], workers: int = 4):
         """
@@ -133,7 +133,7 @@ class Loader:
         if isinstance(pdf_files, str):
             pdf_files = [pdf_files]
         doc_loaded = self.doc_loader(pdf_files, workers=workers)
-        doc_split = self.doc_spltter(doc_loaded)
+        doc_split = self.doc_splitter(doc_loaded)
         return doc_split
 
     def load_dir(self, dir_path: str, workers: int = 4):

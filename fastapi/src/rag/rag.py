@@ -7,35 +7,6 @@ from langchain_core.output_parsers import StrOutputParser # Used for parsing the
 class Str_OutputParser(StrOutputParser):
     """
     This class is used to parse the output of the RAG model.
-
-    Explanation: The pattern `r"Answer:\s*(.*)"` is a regular expression used to search and extract a portion of a text string. 
-    Let's break down each part of this pattern:
-    
-    1. `r""`: This is a raw string literal in Python. When using `r""`, special characters in the string will not be escaped. 
-       This is useful when working with regular expressions because it helps avoid having to escape special characters multiple times.
-       For instance:
-           >>> print(r"\n")  # Output: \n (raw string contains the backslash character)
-           >>> print("\n")   # Output: (newline character)
-    
-    2. `Answer:`: This is a fixed string that the regular expression will search for. It requires the text string to contain the word "Answer:".
-    
-    3. `\s*`:
-       - `\s` is a special character in regular expressions, representing any whitespace character (including spaces, tabs, newlines, etc.).
-       - `*` is a repetition operator, meaning "0 or more times".
-       So, `\s*` means "0 or more whitespace characters".
-    
-    4. `(.*)`:
-       - `.` is a special character in regular expressions, representing any character except newline.
-       - The pair of parentheses `()` is used to create a capture group.
-       In this case, `(.*)` will capture and store all characters after "Answer:" and any whitespace, up to the end of the line or string.
-    
-    In short, the pattern `r"Answer:\s*(.*)"` will search for a string that starts with "Answer:", followed by any number of whitespace characters, 
-    and then any sequence of characters. The part of the string after "Answer:" and the space will be stored in the first catch group (group 1) 
-    and can be accessed using `match.group(1)`.
-    
-    For example:
-    - For the string "Answer: Hello World", `group(1)` will return "Hello World".
-    - For the string "Answer: This is a test", `group(1)` will return "This is a test".
     """
     def parse(self, text: str) -> str:
         return self._extract_answer(text)
@@ -52,9 +23,39 @@ class Str_OutputParser(StrOutputParser):
         else:
             return text_response
 
-class RAG:
+class RAG_Chain:
     """
     This class is used to create a RAG chain.
+
+    Explanation:
+        The pattern `r"Answer:\s*(.*)"` is a regular expression used to search and extract a portion of a text string. 
+        Let's break down each part of this pattern:
+        
+        1. `r""`: This is a raw string literal in Python. When using `r""`, special characters in the string will not be escaped. 
+        This is useful when working with regular expressions because it helps avoid having to escape special characters multiple times.
+        For instance:
+            >>> print(r"\n")  # Output: \n (raw string contains the backslash character)
+            >>> print("\n")   # Output: (newline character)
+        
+        2. `Answer:`: This is a fixed string that the regular expression will search for. It requires the text string to contain the word "Answer:".
+        
+        3. `\s*`:
+        - `\s` is a special character in regular expressions, representing any whitespace character (including spaces, tabs, newlines, etc.).
+        - `*` is a repetition operator, meaning "0 or more times".
+        So, `\s*` means "0 or more whitespace characters".
+        
+        4. `(.*)`:
+        - `.` is a special character in regular expressions, representing any character except newline.
+        - The pair of parentheses `()` is used to create a capture group.
+        In this case, `(.*)` will capture and store all characters after "Answer:" and any whitespace, up to the end of the line or string.
+        
+        In short, the pattern `r"Answer:\s*(.*)"` will search for a string that starts with "Answer:", followed by any number of whitespace characters, 
+        and then any sequence of characters. The part of the string after "Answer:" and the space will be stored in the first catch group (group 1) 
+        and can be accessed using `match.group(1)`.
+    
+        For example:
+        - For the string "Answer: Hello World", `group(1)` will return "Hello World".
+        - For the string "Answer: This is a test", `group(1)` will return "This is a test".
     """
     def __init__(self, llm) -> None:
         self.llm = llm

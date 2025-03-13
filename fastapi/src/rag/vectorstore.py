@@ -1,7 +1,7 @@
 from typing import Union
 from langchain_chroma import Chroma
 from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 
 class VectorDB:
     """
