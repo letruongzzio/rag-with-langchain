@@ -36,6 +36,7 @@ def build_chat_chain(llm, history_folder, max_history_length):
         A chat chain with a history of chat messages.
     """
     chain = chat_prompt | llm | Str_OutputParser()
+    # Use `RunnableWithMessageHistory` to store chat history. It is a necessary step to enable chat history functionality and helps chatbots remember past conversations.
     chain_with_history = RunnableWithMessageHistory(
         runnable=chain,
         get_session_history=create_session_factory(

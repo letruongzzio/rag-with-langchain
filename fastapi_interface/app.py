@@ -6,7 +6,7 @@ import os
 # This is especially useful when you encounter multithreading-related warnings or errors while tokenizing text.
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 """
@@ -63,17 +63,19 @@ Both approaches can be used to add routes to a FastAPI application, but `APIRout
 from langserve import add_routes
 from fastapi_interface.src.base.llm_model import get_hf_llm
 from fastapi_interface.src.rag.main import build_rag_chain, InputQA, OutputQA
-from fastapi_interface.src.chat.chat import build_chat_chain
+from fastapi_interface.src.chat.chat import build_chat_chain, InputChat
 
 llm = get_hf_llm(temperature=0.9)
 # The `temperature` parameter in a language model like GPT-3 controls the randomness of the generated text. A higher temperature value results in more diverse and creative outputs, while a lower value produces more conservative and predictable outputs.
 
-docs = "~/rag-with-langchain/fastapi/data_src/file_storage"
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+print(PROJECT_DIR)
+docs = os.path.join(PROJECT_DIR, "data_src/file_storage")
 
 # --------- Chains----------------
 doc_chain = build_rag_chain(llm, data_dir=docs, data_type="pdf")
 chat_chain = build_chat_chain(llm,
-                              history_folder="~/rag-with-langchain/fastapi/chat_histories",
+                              history_folder=os.path.join(PROJECT_DIR, "chat_histories"),
                               max_history_length=6)
 
 # --------- FastAPI - App ----------------
@@ -106,6 +108,12 @@ async def generative_ai(inputs: InputQA):
     """
     answer = doc_chain.invoke(inputs.question)
     return {"answer": answer}
+
+@app.post("/chat")
+async def chat(inputs: InputChat, request: Request):
+    session_id = request.cookies.get("session_id", "default_session") # Get session from cookie (or default).
+    response = chat_chain.invoke({"human_input": inputs.human_input}, config={"configurable": {"session_id": session_id}}) # Invoke the chat chain with the human input and session ID.
+    return {"answer": response}
 
 # --------- Langserve Routes - Playground ----------------
 add_routes(app,

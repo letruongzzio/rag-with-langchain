@@ -3,6 +3,8 @@ from transformers import BitsAndBytesConfig
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from langchain_community.llms import HuggingFacePipeline
 
+
+# Define the BitsAndBytesConfig for the Hugging Face pipeline to save memory
 nf4_config = BitsAndBytesConfig(
     load_in_4bit=True,
     bnb_4bit_quant_type="nf4",
@@ -11,8 +13,8 @@ nf4_config = BitsAndBytesConfig(
 )
 
 
-def get_hf_llm(model_name: str = "mistralai/Mistral-7B-Instruct-v0.2",
-               max_new_token = 1024,
+def get_hf_llm(model_name: str = "facebook/opt-1.3b",
+               max_new_token = 256,
                **kwargs):
     """
     Get a Hugging Face language model pipeline
@@ -38,7 +40,7 @@ def get_hf_llm(model_name: str = "mistralai/Mistral-7B-Instruct-v0.2",
         model=model,
         tokenizer=tokenizer,
         max_new_tokens=max_new_token,
-        pad_token_id=model.eos_token_id,
+        pad_token_id=tokenizer.eos_token_id,
         device_map="auto"
     )
 
